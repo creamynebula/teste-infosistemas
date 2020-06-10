@@ -1,6 +1,6 @@
 # teste-infosistemas
 
-Teste técnico para a Infosistemas
+<strong>Teste técnico para a Infosistemas</strong>
 <br><br>
 Pegue o arquivo .env que enviei no email e coloque na raiz do projeto, ele contém o endereço e a chave necessários para a aplicação acessar o banco de dados na nuvem.
 <br><br>

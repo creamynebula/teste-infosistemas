@@ -13,6 +13,7 @@ mongoose
   .connect(config.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useCreateIndex: true,
   })
   .then(() => console.log("Connected to DB"))
   .catch(() => console.log("Error, not connected to DB :("));

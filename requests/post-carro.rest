@@ -2,7 +2,7 @@ POST http://localhost:3000/carros
 Content-Type: application/json
 
 {
-    "placa": "abc",
+  "placa": "abc",
   "chassi": "xyz",
   "renavam": "uio",
   "modelo": "X1",

@@ -1,9 +1,11 @@
-PUT http://localhost:3003/api/blogs/5e9f0ad2a27f762e6cbc18ba
+PUT http://localhost:3000/carros/5edff08ea464984f7cd3fd5f
 Content-Type: application/json
 
 {
-    "title": "Well I'm THE blog",
-    "author": "Corredor X",
-    "url": "www.nyaa.si",
-    "likes": 10
+  "placa": "def",
+  "chassi": "xyz",
+  "renavam": "uio",
+  "modelo": "X1",
+  "marca": "Porsche",
+  "ano": "0"
 }

@@ -12,7 +12,7 @@ carroRouter.get("/", async (request, response) => {
 
 carroRouter.get("/:id", async (request, response) => {
   try {
-    const carro = Carro.findById(request.params.id);
+    const carro = await Carro.findById(request.params.id);
     return response.status(200).json(carro.toJSON());
   } catch (err) {
     return response.status(400).json({
@@ -35,19 +35,6 @@ const checkForMissingField = (body) => {
   else return false; //no field missing
 };
 
-const makeCarFromRequest = (body) => {
-  const carro = new Carro({
-    //cant do 'carro = new Carro({...body}) or the user could inject other properties
-    placa: body.placa,
-    chassi: body.chassi,
-    renavam: body.renavam,
-    modelo: body.modelo,
-    marca: body.marca,
-    ano: body.ano,
-  });
-  return carro;
-};
-
 carroRouter.post("/", async (request, response) => {
   const body = request.body;
   const fieldMissing = checkForMissingField(body);
@@ -59,7 +46,15 @@ carroRouter.post("/", async (request, response) => {
     });
   }
 
-  const carro = makeCarFromRequest(body);
+  const carro = new Carro({
+    //cant do 'carro = new Carro({...body}) or the user could inject other properties
+    placa: body.placa,
+    chassi: body.chassi,
+    renavam: body.renavam,
+    modelo: body.modelo,
+    marca: body.marca,
+    ano: body.ano,
+  });
 
   try {
     const result = await carro.save();
@@ -94,6 +89,7 @@ carroRouter.delete("/:id", async (request, response) => {
 
 carroRouter.put("/:id", async (request, response, next) => {
   const body = request.body;
+
   const fieldMissing = checkForMissingField(body);
   if (fieldMissing) {
     return response.status(400).json({
@@ -102,7 +98,15 @@ carroRouter.put("/:id", async (request, response, next) => {
     });
   }
 
-  const carro = makeCarFromRequest(body);
+  const carro = {
+    //can't do new Carro() or it would have _id different than the id we already have, it would throw error on update
+    placa: body.placa,
+    chassi: body.chassi,
+    renavam: body.renavam,
+    modelo: body.modelo,
+    marca: body.marca,
+    ano: body.ano,
+  };
 
   try {
     const updatedCarro = await Carro.findByIdAndUpdate(

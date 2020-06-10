@@ -3,7 +3,7 @@ const uniqueValidator = require("mongoose-unique-validator");
 
 const carroSchema = mongoose.Schema({
   placa: { type: String, required: true, unique: true },
-  chassi: { type: String, required: true, unique: true },
+  chassi: { type: String, required: true, unique: true }, //aka VIN, letters IOQ are not allowed
   renavam: { type: String, required: true, unique: true },
   modelo: { type: String, required: true, unique: false },
   marca: { type: String, required: true, unique: false },
