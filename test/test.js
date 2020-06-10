@@ -1,16 +1,11 @@
+const app = require("../index");
 const axios = require("axios");
-
 const assert = require("assert");
+const mongoose = require("mongoose");
+const supertest = require("supertest");
+const Carro = require("../models/carro");
 
-const carroExemplo = {
-  placa: "abc",
-  chassi: "xyz",
-  renavam: "uio",
-  modelo: "X1",
-  marca: "Porsche",
-  ano: "0",
-  id: "5edff827bc24db4534c32ccb",
-};
+const api = supertest(app);
 
 const carrosExemplos = [
   {
@@ -78,37 +73,56 @@ const carrosExemplos = [
     ano: "1994",
   },
 ];
+let carrosExemplosComId = [];
+let id, randomIndex;
 
 describe("Testes das operações CRUD:", function () {
-  it("Deve retornar o carro que corresponde ao id", async function () {
-    const carro = await axios.get(
-      "http://localhost:3000/carros/5edff827bc24db4534c32ccb"
+  before(async function () {
+    console.log(
+      'Preparar o DB para os testes:\n\n1. Limpar o DB\n2. Preencher o DB com as entries de "carrosExemplos"\n'
     );
-    //The test passes if 'carro2' is inside our database
+    await Carro.deleteMany({});
 
-    assert.equal(JSON.stringify(carro.data), JSON.stringify(carroExemplo));
-    //JSON.stringify() was used to transform the content of the objects in a string
-    //otherwise comparing objects would be comparing if their address in memory is the same
-    //(it would always return false)
+    const length = carrosExemplos.length;
+    for (let i = 0; i < length; i++) {
+      let novoCarro = new Carro(carrosExemplos[i]);
+      let novoCarroComId = await novoCarro.save();
+      carrosExemplosComId = carrosExemplosComId.concat(novoCarroComId);
+    }
+
+    randomIndex = Math.floor(Math.random() * carrosExemplosComId.length);
+    id = carrosExemplosComId[randomIndex].id;
   });
 
-  it("Deve retornar um array com todos os carros", async function () {
-    const carros = await axios.get("http://localhost:3000/carros");
-    //The test passes if 'carro2' is inside our database
-    const carros2 = [
-      {
-        placa: "abc",
-        chassi: "xyz",
-        renavam: "uio",
-        modelo: "X1",
-        marca: "Porsche",
-        ano: "0",
-        id: "5edff827bc24db4534c32ccb",
-      },
-    ];
-    assert.equal(JSON.stringify(carros.data), JSON.stringify(carros2));
-    //JSON.stringify() was used to transform the content of the objects in a string
-    //otherwise comparing objects would be comparing if their address in memory is the same
-    //(it would always return false)
+  describe("GET /carros", function () {
+    it("responde com um array contendo todos os carros", function (done) {
+      request(app)
+        .get("/carros")
+        .set("Accept", "application/json")
+        .expect("Content-Type", /json/)
+        .expect(200)
+        .then((response) => {
+          assert.strictEqual(
+            JSON.stringify(response.body),
+            JSON.stringify(carrosExemplosComId)
+          );
+        });
+    });
+  });
+
+  describe("GET /carros/:id", function () {
+    it("", function (done) {
+      request(app)
+        .get(`/carros/${id}`)
+        .set("Accept", "application/json")
+        .expect("Content-Type", /json/)
+        .expect(200)
+        .then((response) => {
+          assert.strictEqual(
+            JSON.stringify(response.body),
+            JSON.stringify(carrosExemplosComId[randomIndex])
+          );
+        });
+    });
   });
 });
